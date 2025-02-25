@@ -1,0 +1,9 @@
+node_modules/
+dist/
+logs/
+.idea/
+
+.DS_Store
+*.iml
+*.log
+*.local

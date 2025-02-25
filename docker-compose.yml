@@ -1,0 +1,108 @@
+x-common-envs: &common-envs
+  environment:
+    SPRING_PROFILES_ACTIVE: docker,auth0
+    OAUTH2_SECURITY_ENABLED: ${OAUTH2_SECURITY_ENABLED:-false}
+    TRACING_ENABLED: ${TRACING_ENABLED:-false}
+    FLUENT_BIT_ENABLED: ${FLUENT_BIT_ENABLED:-false}
+    CIRCUIT_BREAKER_ENABLED: ${CIRCUIT_BREAKER_ENABLED:-false}
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: postgres
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres:/var/lib/postgresql/data
+      - ./docker/postgres/:/docker-entrypoint-initdb.d/
+
+  store-service:
+    build: ./store-service
+    image: romanowalex/store-service:v3.4
+    container_name: store
+    <<: *common-envs
+    healthcheck:
+      test: [ "CMD", "curl", "--silent", "--fail", "http://localhost:8480/manage/health" ]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    ports:
+      - "8480:8480"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  order-service:
+    build: ./order-service
+    image: romanowalex/order-service:v3.4
+    container_name: orders
+    <<: *common-envs
+    healthcheck:
+      test: [ "CMD", "curl", "--silent", "--fail", "http://localhost:8380/manage/health" ]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    ports:
+      - "8380:8380"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  warehouse-service:
+    build: ./warehouse-service
+    image: romanowalex/warehouse-service:v3.4
+    container_name: warehouse
+    <<: *common-envs
+    healthcheck:
+      test: [ "CMD", "curl", "--silent", "--fail", "http://localhost:8280/manage/health" ]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    ports:
+      - "8280:8280"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  warranty-service:
+    build: ./warranty-service
+    image: romanowalex/warranty-service:v3.4
+    container_name: warranty
+    <<: *common-envs
+    healthcheck:
+      test: [ "CMD", "curl", "--silent", "--fail", "http://localhost:8180/manage/health" ]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    ports:
+      - "8180:8180"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  store-frontend:
+    build: .
+    image: romanowalex/store-frontend:v1.0
+    container_name: store-frontend
+    ports:
+      - "8880:80"
+    healthcheck:
+      test: "curl --fail http://localhost || exit 1"
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    depends_on:
+      store-service:
+        condition: service_healthy
+
+volumes:
+  postgres:
