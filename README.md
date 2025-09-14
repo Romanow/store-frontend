@@ -15,6 +15,6 @@ Store Service Backend: [romanow/store-service](https://github.com/Romanow/store-
 
 ```shell
 $ npm install
-$ docker compose up -d --wait postgres person-service
+$ docker compose up -d --wait gateway store-service warehouse-service warranty-service
 $ npm run dev
 ```

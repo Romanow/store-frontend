@@ -1,3 +1,5 @@
--- file: 10-create-user-and-db.sql
+-- file: 10-create-user-and-dbs.sql
 CREATE USER program WITH PASSWORD 'test';
-CREATE DATABASE persons OWNER program;
+CREATE DATABASE store OWNER program;
+CREATE DATABASE warehouse OWNER program;
+CREATE DATABASE warranty OWNER program;
