@@ -9,7 +9,13 @@ const ItemCard: React.FC<{ item: Item; onClick?: () => void }> = ({item, onClick
                 {item.imageUrl && (
                     <CardMedia>
                         <Box component="img" src={item.imageUrl} alt={item.name}
-                             sx={{width: "100%", height: 250, objectFit: "contain", background: "#f5f5f5"}}/>
+                             sx={{
+                                 width: "100%",
+                                 height: 250,
+                                 objectFit: "contain", background: "#f5f5f5",
+                                 transition: 'filter 0.3s ease',
+                                 '&:hover': {filter: 'blur(2px)'}
+                             }}/>
                     </CardMedia>
                 )}
                 <CardContent>

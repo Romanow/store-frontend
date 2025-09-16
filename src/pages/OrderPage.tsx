@@ -11,7 +11,7 @@ const OrdersPage: React.FC = () => {
 
     const handleCreateOrder = async () => {
         if (cart.length === 0) return;
-        const payload = {items: cart.map((ci) => ({name: ci.item.name}))};
+        const payload = cart.map((ci) => (ci.item.name));
 
         try {
             await purchaseOrder(payload).unwrap();

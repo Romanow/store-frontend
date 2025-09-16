@@ -18,3 +18,18 @@ $ npm install
 $ docker compose up -d --wait gateway store-service warehouse-service warranty-service
 $ npm run dev
 ```
+
+Теперь нужно добавить OAuth2 и личный кабинет.
+
+Чтобы добавить товар в корзину, клиент должен быть авторизован. Для авторизации открывается blur на весь экран и в
+центре две кнопки:
+
+* авторизация через Auth0.
+* авторизация через Keycloak.
+
+После этого выполняется redirect на страницу `/oauth2/authorization/${type}`, где type: auth0 или keycloak. После
+успешной авторизации будет redirect на страницу / и в cookie придет `access_token`, который нужно сохранить
+
+Так же для запроса purchase (запрос номер 2) добавить заголовок `Authorization`: `Bearer` + access_token. 
+
+В личном кабинете нужно вывести все заказы (запрос номер 5).
