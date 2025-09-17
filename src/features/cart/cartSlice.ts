@@ -28,7 +28,7 @@ export const cartSlice = createSlice({
             state.items.push({item: action.payload.item});
             saveToStorage(state);
         },
-        removeFromCart(state, action: PayloadAction<{ uid: string }>) {
+        removeFromCart(state, action: PayloadAction<{ name: string }>) {
             state.items = state.items.filter((ci) => ci.item.name !== action.payload.name);
             saveToStorage(state);
         },
