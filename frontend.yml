@@ -1,0 +1,15 @@
+version: "3.9"
+services:
+  store-frontend:
+    build: .
+    image: romanowalex/store-frontend:v1.0
+    container_name: store-frontend
+    environment:
+      GATEWAY_URL: http://gateway:8080
+    ports:
+      - "8880:80"
+    healthcheck:
+      test: "curl --fail http://localhost || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 5
